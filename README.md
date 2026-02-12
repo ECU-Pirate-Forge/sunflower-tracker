@@ -14,7 +14,16 @@ The target audience and primary users of this software would include:
 - ***Manual Control***, which is a feature that can allow the user to manually set the direction of the tracker or temporarily pause the ability to track at their leisure, allowing for better control over the system from the user's end.
 - ***Logging***, where the system will come with the ability to store records of information such as the device's angle, light intensity, and any potential errors that can occur during the tracking process. These records would also have timestamps that allow the users and developers to know exactly when something occurred, whether it was a good or bad occurrence.
 
-## Quickstart
+---
+
+# Quickstart
+
+## Installing Webots
+This system uses Webots to utilize a simulated model as representation of how the sunflower tracker should behave in real life. To install Webots onto your system:
+- Go to the following website and download the Webots installer: https://cyberbotics.com/#download
+- Follow the installation instructions.
+- If new to Webots, the guided tour is recommended.
+
 ```bash
 To Be Added
 ```
