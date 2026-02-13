@@ -1,0 +1,133 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation -0.07581030030775353 0.28382758933300706 0.9558737876417902 0.5449974547420383
+  position -0.3259980229915131 -0.21418914128395056 0.20528502116438563
+}
+DEF SUN DirectionalLight {
+  direction 5 -13 -18
+  castShadows TRUE
+}
+Robot {
+  children [
+    DEF PAN_JOINT HingeJoint {
+      jointParameters HingeJointParameters {
+        position 0.0257734595590243
+        axis 0 0 1
+        anchor 0 0 0.05
+        minStop -3.13
+        maxStop 3.13
+      }
+      device [
+        PositionSensor {
+          name "pan_sensor"
+        }
+        RotationalMotor {
+          name "pan_motor"
+          maxVelocity 2
+          minPosition -3.13
+          maxPosition 3.13
+        }
+      ]
+      endPoint Solid {
+        translation 0 0 0.10999999999999996
+        rotation 0 0 1 0.025773459559022927
+        children [
+          DEF TILT_JOINT HingeJoint {
+            jointParameters HingeJointParameters {
+              position 0.3455132971164754
+              axis 0 1 0
+              anchor 0 0 0.01
+              minStop -1.2
+              maxStop 1.2
+            }
+            device [
+              DEF tilt_sensor PositionSensor {
+                name "tilt_sensor"
+              }
+              DEF tilt_motor RotationalMotor {
+                name "tilt_motor"
+                minPosition -1.2
+                maxPosition 1.2
+              }
+            ]
+            endPoint Solid {
+              translation 0.006773593679795709 0 0.028818034665209623
+              rotation 0 1 0 0.34551329711647566
+              children [
+                LightSensor {
+                  translation 0.015 0 0.031
+                  name "light_right"
+                }
+                LightSensor {
+                  translation -0.015 0 0.031
+                  name "light_left"
+                }
+                Shape {
+                  appearance Appearance {
+                    material Material {
+                      diffuseColor 0.321569 0.321569 0.321569
+                    }
+                  }
+                  geometry Box {
+                    size 0.04 0.04 0.06
+                  }
+                }
+              ]
+              name "TILT_HEAD"
+            }
+          }
+          Shape {
+            appearance Appearance {
+              material Material {
+                diffuseColor 0.0745098 0.584314 0.8
+              }
+            }
+            geometry Box {
+              size 0.08 0.08 0.02
+            }
+          }
+        ]
+        name "PAN_PLATE"
+      }
+    }
+    Solid {
+      translation 0 0 0.04985094465901988
+      children [
+        Shape {
+          appearance Appearance {
+            material Material {
+              diffuseColor 0.666667 0.333333 0
+            }
+          }
+          geometry Box {
+            size 0.1 0.05 0.1
+          }
+        }
+      ]
+      name "BASE"
+      boundingObject Box {
+        size 0.1 0.05 0.1
+      }
+      physics Physics {
+      }
+      linearVelocity 0 0 -6.070850366769103e-08
+    }
+  ]
+  name "pan_tilt"
+  controller "pan_test"
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+  luminosity 0
+}
+RectangleArena {
+  floorSize 10 10
+}
