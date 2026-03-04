@@ -50,7 +50,7 @@ To Be Added
 ---
 
 ## Contributing
-*To be Added*
+For information regarding how the development team is meant to properly contribute and review code, see the file titled _"CODE_REVIEW_README.md"_
 
 ## License
 *To be Added*
