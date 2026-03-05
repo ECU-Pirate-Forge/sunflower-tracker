@@ -7,18 +7,19 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.07581030030775353 0.28382758933300706 0.9558737876417902 0.5449974547420383
-  position -0.3259980229915131 -0.21418914128395056 0.20528502116438563
+  orientation 0.20996189850554633 -0.15455639012076078 -0.9654161400395096 4.377266467080939
+  position 0.20815326737634357 -0.6296225896374759 0.412248883023469
 }
 DEF SUN DirectionalLight {
-  direction 5 -13 -18
+  direction -3 -1 -20
+  intensity 3
   castShadows TRUE
 }
 Robot {
   children [
     DEF PAN_JOINT HingeJoint {
       jointParameters HingeJointParameters {
-        position 0.0257734595590243
+        position 0.8220270621656709
         axis 0 0 1
         anchor 0 0 0.05
         minStop -3.13
@@ -36,12 +37,12 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation 0 0 0.10999999999999996
-        rotation 0 0 1 0.025773459559022927
+        translation 0 0 0.10999999999999986
+        rotation 0 0 1 0.8220270621656709
         children [
           DEF TILT_JOINT HingeJoint {
             jointParameters HingeJointParameters {
-              position 0.3455132971164754
+              position -0.5612599042165533
               axis 0 1 0
               anchor 0 0 0.01
               minStop -1.2
@@ -58,16 +59,30 @@ Robot {
               }
             ]
             endPoint Solid {
-              translation 0.006773593679795709 0 0.028818034665209623
-              rotation 0 1 0 0.34551329711647566
+              translation -0.010645064726677877 0 0.026931703900223314
+              rotation 0 -1 0 0.5612599042165533
               children [
                 LightSensor {
-                  translation 0.015 0 0.031
+                  translation 0.018 0 0.03
+                  rotation 0.037113480951260276 0.37113480951260275 0.9278370237815069 -0.7426996938995747
                   name "light_right"
+                  lookupTable [
+                    0 0 0
+                    20 1 0
+                    100 5 0
+                    1000 10 0
+                  ]
                 }
                 LightSensor {
-                  translation -0.015 0 0.031
+                  translation -0.018 0 0.03
+                  rotation 0.19611613513818404 0 0.9805806756909201 2.5000003061004255
                   name "light_left"
+                  lookupTable [
+                    0 0 0
+                    20 1 0
+                    100 5 0
+                    1000 10 0
+                  ]
                 }
                 Shape {
                   appearance Appearance {
@@ -98,7 +113,7 @@ Robot {
       }
     }
     Solid {
-      translation 0 0 0.04985094465901988
+      translation 0 0 0.04981170465902753
       children [
         Shape {
           appearance Appearance {
@@ -117,11 +132,12 @@ Robot {
       }
       physics Physics {
       }
-      linearVelocity 0 0 -6.070850366769103e-08
+      linearVelocity 0 0 -5.6843418860808e-17
     }
   ]
   name "pan_tilt"
   controller "pan_test"
+  supervisor TRUE
 }
 TexturedBackground {
 }
