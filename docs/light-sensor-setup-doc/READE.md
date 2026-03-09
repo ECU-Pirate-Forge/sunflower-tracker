@@ -35,6 +35,13 @@ Sensor access by name:
 - `robot.getDevice("light_left")`
 - `robot.getDevice("light_right")`
 
+Result Example:
+ - `L:0.126 R:0.62 diff:0.064 -> LEFT`
+ - L/R are the placements of light sensors.
+ - `diff`: the difference value between L and R sensors.
+ - If the L value is greater than the R value, that indicates the sun is located on the `LEFT` side of the sensor. 
+
+
 ---
 
 ## Observed value range (Acceptance Criteria #5)
