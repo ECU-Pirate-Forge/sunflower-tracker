@@ -18,7 +18,7 @@ Add light sensors to the pan/tilt mount so the controller can detect **light int
 - `light_right` (LightSensor)
 
 ### Where they live in the Scene Tree
-Robot `pan_tilt` → `PAN_JOINT` → `endPoint Solid` → `TILT_JOINT` → `endPoint Solid` (`TILT_HEAD`) → children  
+Robot `pan_tilt` → `children` → `DEF PAN_JOINT HingeJoint` → `endPoint Solid` → `children` → `DEF TILT_JOINT HingeJoint`→ `endPoint Solid` → `children` 
 - `LightSensor "light_left"`
 - `LightSensor "light_right"`
 
@@ -56,7 +56,9 @@ Run the controller for ~30 seconds while pan/tilt moves.
 
 ## Evidence (screenshots)
 - Scene Tree showing sensors: `Images/scene-tree-sensors.png`
-- Sensor placement/orientation: `Images/sensor-placement.png`
+- Sensor placement/orientation:
+    - `Images/sensor-placement-left.png`
+    - `Images/sensor-placement-right.png`
 - Console output sample:
     - `Images/console-value-output.png`
     - `Images/console-range-output.png`
