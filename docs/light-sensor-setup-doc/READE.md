@@ -55,8 +55,8 @@ Run the controller for ~30 seconds while pan/tilt moves.
 ---
 
 ## Evidence (screenshots)
-- Scene Tree showing sensors: `images/scene-tree-sensors.png`
-- Sensor placement/orientation: `images/sensor-placement.png`
+- Scene Tree showing sensors: `Images/scene-tree-sensors.png`
+- Sensor placement/orientation: `Images/sensor-placement.png`
 - Console output sample:
-    - `images/console-value-output.png`
-    - `images/console-range-output.png`
+    - `Images/console-value-output.png`
+    - `Images/console-range-output.png`
