@@ -1,33 +1,35 @@
-from controller import Robot
+from controller import Supervisor
 import math
 
-robot = Robot()
+robot = Supervisor()
 timestep = int(robot.getBasicTimeStep())
 
-pan = robot.getDevice("pan_motor")
-tilt = robot.getDevice("tilt_motor")
+# grabbing the sun object from the scene so we can move it
+# this is the light source that will move across the sky
+sun_node = robot.getFromDef("SUN")
 
-pan_sensor = robot.getDevice("pan_sensor")
-tilt_sensor = robot.getDevice("tilt_sensor")
-pan_sensor.enable(timestep)
-tilt_sensor.enable(timestep)
-light_left = robot.getDevice("light_left")
-light_right = robot.getDevice("light_right")
-light_left.enable(timestep)
-light_right.enable(timestep)
+# change this number to control how fast the sun moves
+# 60.0 means the sun completes a full arc in 60 seconds (sped up)
+# if you want real time you'd set this to 86400.0 (seconds in a day)
+SUN_CYCLE_SECONDS = 60.0
 
+# this function figures out where the sun should be at any given time
+# it traces an arc from one side of the sky to the other like a real sunrise/sunset
+# speed depends on SUN_CYCLE_SECONDS above
+def get_sun_direction(t):
+    angle = (t / SUN_CYCLE_SECONDS) * math.pi
+    x = math.cos(angle)
+    y = -abs(math.sin(angle))  # keeps the sun above the horizon
+    z = math.sin(angle) * 0.3  # slight drift so it doesnt just go straight across
+    return [x, y, z]
 
-# Make sure motors are allowed to move at a visible speed
-pan.setVelocity(1.5)
-tilt.setVelocity(1.5)
-
+# main loop - runs every timestep and updates the sun position
 t = 0.0
 while robot.step(timestep) != -1:
     t += timestep / 1000.0
 
-    # Pan: +/- 1 rad, Tilt: +/- 0.6 rad
-    pan.setPosition(1.0 * math.sin(t))
-    tilt.setPosition(0.6 * math.sin(0.7 * t))
-    print("L:", light_left.getValue(), "R:", light_right.getValue())
-    
+    # move the sun to its new position each step
+    sun_dir = get_sun_direction(t)
+    if sun_node:
+        sun_node.getField("direction").setSFVec3f(sun_dir)
 
