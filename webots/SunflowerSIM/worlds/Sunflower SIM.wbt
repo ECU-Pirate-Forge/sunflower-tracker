@@ -19,7 +19,7 @@ Robot {
   children [
     DEF PAN_JOINT HingeJoint {
       jointParameters HingeJointParameters {
-        position 0.8220270621656709
+        position 0.9880542773165241
         axis 0 0 1
         anchor 0 0 0.05
         minStop -3.13
@@ -37,12 +37,12 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation 0 0 0.10999999999999986
-        rotation 0 0 1 0.8220270621656709
+        translation 0 0 0.10999999999999985
+        rotation 0 0 1 0.9880542773165242
         children [
           DEF TILT_JOINT HingeJoint {
             jointParameters HingeJointParameters {
-              position -0.5612599042165533
+              position -0.38661737412303127
               axis 0 1 0
               anchor 0 0 0.01
               minStop -1.2
@@ -59,8 +59,8 @@ Robot {
               }
             ]
             endPoint Solid {
-              translation -0.010645064726677877 0 0.026931703900223314
-              rotation 0 -1 0 0.5612599042165533
+              translation -0.007541152493679072 0 0.02852379602206516
+              rotation 0 -0.9999999999999999 0 0.3866173741230309
               children [
                 LightSensor {
                   translation 0.018 0 0.03
@@ -113,7 +113,7 @@ Robot {
       }
     }
     Solid {
-      translation 0 0 0.04981170465902753
+      translation 0 0 0.04979600865902755
       children [
         Shape {
           appearance Appearance {

@@ -6,5 +6,5 @@ maximizedDockId: -1
 centralWidgetVisible: 1
 renderingMode: PLAIN
 orthographicViewHeight: 1
-textFiles: 0 "controllers/pan_test/pan_test.py"
+textFiles: 0 "../sunflower-tracker/webots/SunflowerSIM/controllers/pan_test/pan_test.py"
 consoles: Console:All:All
