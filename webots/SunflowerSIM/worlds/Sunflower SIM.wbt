@@ -7,8 +7,8 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.07581030030775353 0.28382758933300706 0.9558737876417902 0.5449974547420383
-  position -0.3259980229915131 -0.21418914128395056 0.20528502116438563
+  orientation 0.027251651055743335 -0.18523047015499314 0.9823171689637193 0.2972295641904832
+  position -1.4248355125222492 -0.363995558213869 0.0409735022995089
 }
 DEF SUN DirectionalLight {
   direction 5 -13 -18
@@ -18,7 +18,7 @@ Robot {
   children [
     DEF PAN_JOINT HingeJoint {
       jointParameters HingeJointParameters {
-        position 0.0257734595590243
+        position 0.13321133919749836
         axis 0 0 1
         anchor 0 0 0.05
         minStop -3.13
@@ -36,12 +36,12 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation 0 0 0.10999999999999996
-        rotation 0 0 1 0.025773459559022927
+        translation 0 0 0.11000000000000003
+        rotation 0 0 1 0.13321133919749742
         children [
           DEF TILT_JOINT HingeJoint {
             jointParameters HingeJointParameters {
-              position 0.3455132971164754
+              position 0.3539507454408668
               axis 0 1 0
               anchor 0 0 0.01
               minStop -1.2
@@ -58,8 +58,8 @@ Robot {
               }
             ]
             endPoint Solid {
-              translation 0.006773593679795709 0 0.028818034665209623
-              rotation 0 1 0 0.34551329711647566
+              translation 0.006932126884517043 0 0.028760213667678544
+              rotation 0 1 0 0.3539507454408666
               children [
                 LightSensor {
                   translation 0.015 0 0.031
@@ -98,7 +98,8 @@ Robot {
       }
     }
     Solid {
-      translation 0 0 0.04985094465901988
+      translation -8.029050170212439e-15 0.0003703647448524714 0.04970973598026496
+      rotation -0.9999999999999999 -2.958735067645641e-11 -1.1640727509170787e-10 7.500540599336263e-06
       children [
         Shape {
           appearance Appearance {
@@ -117,7 +118,8 @@ Robot {
       }
       physics Physics {
       }
-      linearVelocity 0 0 -6.070850366769103e-08
+      linearVelocity 0 0 -2.8950050858611264e-07
+      angularVelocity 1.1901909845301768e-21 -3.4546010281948924e-32 -4.8948136377663653e-32
     }
   ]
   name "pan_tilt"
@@ -130,4 +132,40 @@ TexturedBackgroundLight {
 }
 RectangleArena {
   floorSize 10 10
+}
+Robot {
+  children [
+    SliderJoint {
+      jointParameters JointParameters {
+        position 0.07
+        maxStop 0.02
+        staticFriction 0.5
+      }
+      device [
+        LinearMotor {
+          name "selector_motor"
+        }
+        PositionSensor {
+          name "switch_sensor"
+        }
+      ]
+      endPoint Solid {
+        translation 1.23082e-14 -0.0503704 0.07
+        children [
+          Shape {
+            geometry Box {
+              size 0.05 0.03 0.005
+            }
+          }
+        ]
+        boundingObject Shape {
+          geometry Box {
+            size 0.05 0.03 0.005
+          }
+        }
+      }
+    }
+  ]
+  name "switch_device"
+  controller "switch_test"
 }
