@@ -1,0 +1,285 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation -0.07581030030775353 0.28382758933300706 0.9558737876417902 0.5449974547420383
+  position -0.3259980229915131 -0.21418914128395056 0.20528502116438563
+}
+DEF SUN DirectionalLight {
+  direction 5 -13 -18
+  castShadows TRUE
+}
+
+Robot {
+  children [
+    DEF PAN_JOINT HingeJoint {
+      jointParameters HingeJointParameters {
+        position 0.0257734595590243
+        axis 0 0 1
+        anchor 0 0 0.05
+        minStop -3.13
+        maxStop 3.13
+      }
+      device [
+        PositionSensor {
+          name "pan_sensor"
+        }
+        RotationalMotor {
+          name "pan_motor"
+          maxVelocity 2
+          minPosition -3.13
+          maxPosition 3.13
+        }
+      ]
+      endPoint Solid {
+        translation 0 0 0.11
+        rotation 0 0 1 0.025773459559022927
+        children [
+          DEF TILT_JOINT HingeJoint {
+            jointParameters HingeJointParameters {
+              position 0.3455132971164754
+              axis 0 1 0
+              anchor 0 0 0.01
+              minStop -1.2
+              maxStop 1.2
+            }
+            device [
+              DEF tilt_sensor PositionSensor {
+                name "tilt_sensor"
+              }
+              DEF tilt_motor RotationalMotor {
+                name "tilt_motor"
+                minPosition -1.2
+                maxPosition 1.2
+              }
+            ]
+            endPoint Solid {
+              translation 0.0068 0 0.0288
+              rotation 0 1 0 0.34551329711647566
+              children [
+                Solid {
+                  translation 0 0 0.04
+                  children [
+
+                    Transform {
+                      translation 0 0.065 0
+                      children [
+                        Shape {
+                          appearance PBRAppearance {
+                            baseColor 0.75 0.75 0.75
+                            metalness 1
+                            roughness 0.25
+                          }
+                          geometry Box { size 0.22 0.01 0.015 }
+                        }
+                      ]
+                    }
+                    Transform {
+                      translation 0 -0.065 0
+                      children [
+                        Shape {
+                          appearance PBRAppearance {
+                            baseColor 0.75 0.75 0.75
+                            metalness 1
+                            roughness 0.25
+                          }
+                          geometry Box { size 0.22 0.01 0.015 }
+                        }
+                      ]
+                    }
+                    Transform {
+                      translation 0.105 0 0
+                      children [
+                        Shape {
+                          appearance PBRAppearance {
+                            baseColor 0.75 0.75 0.75
+                            metalness 1
+                            roughness 0.25
+                          }
+                          geometry Box { size 0.01 0.14 0.015 }
+                        }
+                      ]
+                    }
+                    Transform {
+                      translation -0.105 0 0
+                      children [
+                        Shape {
+                          appearance PBRAppearance {
+                            baseColor 0.75 0.75 0.75
+                            metalness 1
+                            roughness 0.25
+                          }
+                          geometry Box { size 0.01 0.14 0.015 }
+                        }
+                      ]
+                    }
+
+                    Shape {
+                      appearance PBRAppearance {
+                        baseColor 0.02 0.12 0.35
+                        emissiveColor 0 0.05 0.1
+                        roughness 0.15
+                        metalness 0.1
+                      }
+                      geometry Box {
+                        size 0.2 0.12 0.002
+                      }
+                    }
+
+                    Shape {
+                      appearance Appearance {
+                        material Material {
+                          diffuseColor 0.8 0.8 0.8
+                          transparency 0.7
+                        }
+                      }
+                      geometry IndexedLineSet {
+                        coord Coordinate {
+                          point [
+                            -0.08 -0.06 0.002, -0.08 0.06 0.002,
+                            -0.04 -0.06 0.002, -0.04 0.06 0.002,
+                             0.00 -0.06 0.002,  0.00 0.06 0.002,
+                             0.04 -0.06 0.002,  0.04 0.06 0.002,
+                             0.08 -0.06 0.002,  0.08 0.06 0.002,
+                            -0.1 -0.04 0.002, 0.1 -0.04 0.002,
+                            -0.1  0.00 0.002, 0.1  0.00 0.002,
+                            -0.1  0.04 0.002, 0.1  0.04 0.002
+                          ]
+                        }
+                        coordIndex [
+                          0 1 -1, 2 3 -1, 4 5 -1, 6 7 -1, 8 9 -1,
+                          10 11 -1, 12 13 -1, 14 15 -1
+                        ]
+                      }
+                    }
+
+                    Shape {
+                      appearance PBRAppearance {
+                        baseColor 0.05 0.05 0.08
+                        transparency 0.6
+                        roughness 0.05
+                      }
+                      geometry Box {
+                        size 0.205 0.125 0.002
+                      }
+                    }
+
+                    Transform {
+                      translation 0 0 -0.01
+                      children [
+                        Shape {
+                          appearance PBRAppearance {
+                            baseColor 0.1 0.1 0.1
+                            roughness 0.6
+                          }
+                          geometry Box {
+                            size 0.04 0.03 0.02
+                          }
+                        }
+                      ]
+                    }
+
+                    Transform {
+                      translation 0.02 0 -0.03
+                      children [
+                        Shape {
+                          appearance Appearance {
+                            material Material {
+                              diffuseColor 0 0 0
+                            }
+                          }
+                          geometry Cylinder {
+                            radius 0.003
+                            height 0.08
+                          }
+                        }
+                      ]
+                    }
+                    Transform {
+                      translation -0.02 0 -0.03
+                      children [
+                        Shape {
+                          appearance Appearance {
+                            material Material {
+                              diffuseColor 0 0 0
+                            }
+                          }
+                          geometry Cylinder {
+                            radius 0.003
+                            height 0.08
+                          }
+                        }
+                      ]
+                    }
+
+                    LightSensor {
+                      translation 0.015 0 0.05
+                      name "light_right"
+                    }
+                    LightSensor {
+                      translation -0.015 0 0.05
+                      name "light_left"
+                    }
+
+                  ]
+                  name "SOLAR_PANEL"
+                }
+              ]
+              name "TILT_HEAD"
+            }
+          }
+
+          Shape {
+            appearance Appearance {
+              material Material {
+                diffuseColor 0.07 0.58 0.8
+              }
+            }
+            geometry Box {
+              size 0.08 0.08 0.02
+            }
+          }
+        ]
+        name "PAN_PLATE"
+      }
+    }
+
+    Solid {
+      translation 0 0 0.05
+      children [
+        Shape {
+          appearance Appearance {
+            material Material {
+              diffuseColor 0.666667 0.333333 0
+            }
+          }
+          geometry Box {
+            size 0.1 0.05 0.1
+          }
+        }
+      ]
+      name "BASE"
+      boundingObject Box {
+        size 0.1 0.05 0.1
+      }
+      physics Physics {
+      }
+    }
+  ]
+  name "pan_tilt"
+  controller "pan_test"
+}
+
+TexturedBackground {
+}
+TexturedBackgroundLight {
+  luminosity 0
+}
+RectangleArena {
+  floorSize 10 10
+}
