@@ -33,3 +33,7 @@ while robot.step(timestep) != -1:
     if sun_node:
         sun_node.getField("direction").setSFVec3f(sun_dir)
 
+if __name__ == "__main__":
+    if Robot is None:
+        raise RuntimeError("This controller must be run inside Webots (controller module not found).")
+    main()
