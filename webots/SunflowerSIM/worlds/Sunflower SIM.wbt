@@ -7,19 +7,24 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 WorldInfo {
 }
 Viewpoint {
-  orientation 0.20996189850554633 -0.15455639012076078 -0.9654161400395096 4.377266467080939
-  position 0.20815326737634357 -0.6296225896374759 0.412248883023469
+  orientation -0.20220420234846898 0.03705618773155811 0.978642069146541 2.786671674313313
+  position 1.3837555328130833 -0.4808403162839602 0.6802191750673664
 }
 DEF SUN DirectionalLight {
-  direction -3 -1 -20
+  direction -0.7939903986943607 -0.6079302976338407 -0.1823790892901522
   intensity 3
   castShadows TRUE
+}
+Robot {
+  name "world_supervisor"
+  controller "sun_cycle"
+  supervisor TRUE
 }
 Robot {
   children [
     DEF PAN_JOINT HingeJoint {
       jointParameters HingeJointParameters {
-        position 0.9880542773165241
+        position -0.20072035413197928
         axis 0 0 1
         anchor 0 0 0.05
         minStop -3.13
@@ -37,12 +42,12 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation 0 0 0.10999999999999985
-        rotation 0 0 1 0.9880542773165242
+        translation 0 0 0.10999999999999976
+        rotation 0 0 -0.9999999999999999 0.20072035413197897
         children [
           DEF TILT_JOINT HingeJoint {
             jointParameters HingeJointParameters {
-              position -0.38661737412303127
+              position 0.33001792014976833
               axis 0 1 0
               anchor 0 0 0.01
               minStop -1.2
@@ -59,8 +64,8 @@ Robot {
               }
             ]
             endPoint Solid {
-              translation -0.007541152493679072 0 0.02852379602206516
-              rotation 0 -0.9999999999999999 0 0.3866173741230309
+              translation 0.00648119963126642 0 0.028920730729537693
+              rotation 0 1 0 0.3300179201497688
               children [
                 LightSensor {
                   translation 0.018 0 0.03
@@ -113,7 +118,7 @@ Robot {
       }
     }
     Solid {
-      translation 0 0 0.04979600865902755
+      translation 0 0 0.04972539220733977
       children [
         Shape {
           appearance Appearance {
@@ -135,8 +140,8 @@ Robot {
       linearVelocity 0 0 -5.6843418860808e-17
     }
   ]
-  name "pan_tilt"
-  controller "pan_test"
+  name "sunflower_tracker"
+  controller "tracker_main"
   supervisor TRUE
 }
 TexturedBackground {
