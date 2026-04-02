@@ -13,6 +13,7 @@ try:
 except ImportError:
     Robot = None  # allows pytest to import this file outside Webots
 import math
+from typing import List, Tuple
 
 
 USE_PATTERN = False  # If True, follows fixed pattern; if False, uses sine wave motion.
@@ -37,6 +38,22 @@ PATTERN = [
     (-0.8, 3000),    # left
     (0.0, 3000),     # centre
 ]
+
+def step_pattern(
+    index: int,
+    elapsed: int,
+    timestep: int,
+    pattern: List[Tuple[float, int]],
+):
+    elapsed += timestep
+    target, dwell = pattern[index]
+
+    if elapsed >= dwell:
+        elapsed = 0
+        index = (index + 1) % len(pattern)
+        target, _ = pattern[index]
+
+    return index, elapsed, target
 
 
 def classify_direction(l: float, r: float, deadband: float = DEADBAND) -> str:
@@ -63,11 +80,13 @@ def main():
 
     pan_motor = robot.getDevice("pan_motor")
     tilt_motor = robot.getDevice("tilt_motor")
+    
     pan_motor.setVelocity(1.5)
     tilt_motor.setVelocity(1.5)
 
     light_left = robot.getDevice("light_left")
     light_right = robot.getDevice("light_right")
+    
     light_left.enable(timestep)
     light_right.enable(timestep)
 
@@ -82,15 +101,15 @@ def main():
     while robot.step(timestep) != -1:
         t += timestep / 1000.0
         step_count += 1
-        elapsed += timestep
-
+        
         if USE_PATTERN:
-            target, dwell = PATTERN[pattern_index]
-
-            if elapsed >= dwell:
-                elapsed = 0
-                pattern_index = (pattern_index + 1) % len(PATTERN)
-                pan_motor.setPosition(PATTERN[pattern_index][0])
+            pattern_index, elapsed, target = step_pattern(
+                pattern_index,
+                elapsed,
+                timestep,
+                PATTERN,
+            )
+            pan_motor.setPosition(target)
 
         else:
             pan_motor.setPosition(PAN_AMPLITUDE * math.sin(PAN_FREQ * t))
@@ -98,6 +117,7 @@ def main():
 
         l = float(light_left.getValue())
         r = float(light_right.getValue())
+        
         diff = l - r
         side = classify_direction(l, r)
 
