@@ -1,6 +1,7 @@
 # pan_closed_loop.py
 from . import config
 
+EPS = 1e-9 # small epsilon for float comparisons (not strictly needed here, but good practice)
 
 def update_pan_closed_loop(pan_motor, left_val: float, right_val: float):
     """
@@ -14,7 +15,7 @@ def update_pan_closed_loop(pan_motor, left_val: float, right_val: float):
     diff = left_val - right_val
 
     # Stop zone (no jitter)
-    if abs(diff) <= config.DEADBAND:
+    if abs(diff) <= config.DEADBAND + EPS:
         # Hold current position (no change)
         return
 
