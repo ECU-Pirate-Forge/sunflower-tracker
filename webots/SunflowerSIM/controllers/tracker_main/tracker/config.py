@@ -18,5 +18,7 @@ TILT_DEADBAND = 0.005
 TILT_STEP = 0.02
 PAN_MIN = -3.14
 PAN_MAX = 3.14
+
+# Open-loop behavior
 TILT_MIN = -1.2
 TILT_MAX = 1.2
