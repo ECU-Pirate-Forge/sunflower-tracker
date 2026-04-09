@@ -19,6 +19,17 @@ TILT_STEP = 0.02
 PAN_MIN = -3.14
 PAN_MAX = 3.14
 
+# Open-loop behaviour
+PAN_OPEN_LOOP_VELOCITY = 2.0  # independent tuning from closed-loop
+
+# (target_position, dwell_time_ms)
+PATTERN = [
+    (0.0, 3000),     # centre
+    (0.8, 3000),     # right
+    (0.0, 3000),     # centre
+    (-0.8, 3000),    # left
+    (0.0, 3000),     # centre
+]
 # Open-loop behavior
 TILT_MIN = -1.2
 TILT_MAX = 1.2
