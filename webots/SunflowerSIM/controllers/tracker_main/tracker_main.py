@@ -1,4 +1,3 @@
-# pan_test.py
 # Minimal controller to verify light sensors on the pan/tilt mount.
 # Prints L/R + diff and a direction label (LEFT/RIGHT/CENTER).
 #
