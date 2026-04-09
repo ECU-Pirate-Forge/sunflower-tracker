@@ -5,13 +5,17 @@
 PAN_MOTOR_NAME = "pan_motor"
 LIGHT_LEFT_NAME = "light_left"
 LIGHT_RIGHT_NAME = "light_right"
+TILT_MOTOR_NAME = "tilt_motor"
 
 # Control tuning
 PAN_MOTOR_VELOCITY = 1.5
+TILT_MOTOR_VELOCITY = 1.5
 
 # Closed-loop behavior
 DEADBAND = 0.02          # within this diff -> stop
 STEP = 0.02              # radians per step (position increment)
+TILT_DEADBAND = 0.005
+TILT_STEP = 0.02
 PAN_MIN = -3.14
 PAN_MAX = 3.14
 
@@ -26,3 +30,6 @@ PATTERN = [
     (-0.8, 3000),    # left
     (0.0, 3000),     # centre
 ]
+# Open-loop behavior
+TILT_MIN = -1.2
+TILT_MAX = 1.2

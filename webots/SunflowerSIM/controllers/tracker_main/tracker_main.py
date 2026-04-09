@@ -7,12 +7,14 @@
 # - Near the sensor "ceiling" (both sensors high), tiny diffs can still be meaningful,
 #   so we reduce the deadband to satisfy the edge-case unit test.
 
-try:
-    from controller import Robot  # Webots runtime
-except ImportError:
-    Robot = None  # allows pytest to import this file outside Webots
 import math
 from typing import List, Tuple
+from controller import Robot
+from tracker import config
+from tracker.sensors import init_light_sensors, read_light_sensors
+from tracker.pan_closed_loop import update_pan_closed_loop
+from tracker.title_open_loop import update_open_loop_tilt
+from tracker.tilt_closed_loop import update_tilt_closed_loop
 
 
 USE_PATTERN = False  # If True, follows fixed pattern; if False, uses sine wave motion.
@@ -77,11 +79,14 @@ def main():
     robot = Robot()
     timestep = int(robot.getBasicTimeStep())
 
-    pan_motor = robot.getDevice("pan_motor")
-    tilt_motor = robot.getDevice("tilt_motor")
-    
-    pan_motor.setVelocity(1.5)
-    tilt_motor.setVelocity(1.5)
+    # Devices
+    pan_motor = robot.getDevice(config.PAN_MOTOR_NAME)
+    pan_motor.setVelocity(config.PAN_MOTOR_VELOCITY)
+    tilt_motor = robot.getDevice(config.TILT_MOTOR_NAME)
+    tilt_motor.setVelocity(config.TILT_MOTOR_VELOCITY)
+
+    tilt_motor = robot.getDevice(config.TILT_MOTOR_NAME)
+    tilt_motor.setVelocity(config.TILT_MOTOR_VELOCITY)
 
     light_left = robot.getDevice("light_left")
     light_right = robot.getDevice("light_right")
@@ -114,17 +119,25 @@ def main():
             pan_motor.setPosition(PAN_AMPLITUDE * math.sin(PAN_FREQ * t))
             tilt_motor.setPosition(TILT_AMPLITUDE * math.sin(TILT_FREQ * t))
 
-        l = float(light_left.getValue())
-        r = float(light_right.getValue())
+        ll = float(light_left.getValue())
+        lr = float(light_right.getValue())
         
-        diff = l - r
-        side = classify_direction(l, r)
+        diff = ll - lr
+        side = classify_direction(ll, lr)
+        # Closed-loop pan update
+        update_pan_closed_loop(pan_motor, l, r)
+        update_tilt_closed_loop(tilt_motor, l, r)
+
+        # Open-loop tilt update
+        """
+        To prevent any clashing with closed loop tilt, I am commenting out open-loop tilt until the functionality
+        for switching between modes is added.
+        update_open_loop_tilt(tilt_motor)
+        """
 
         if step_count % PRINT_EVERY_N_STEPS == 0:
             print(f"L:{l:.3f} R:{r:.3f} diff:{diff:.3f} -> {side}")
 
 
 if __name__ == "__main__":
-    if Robot is None:
-        raise RuntimeError("Run inside Webots (controller module not found).")
     main()
