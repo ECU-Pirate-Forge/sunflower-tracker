@@ -2,7 +2,7 @@
 # Allows for the sunflower tracker to tilt in a direction over a set interval,
 # independent from the light sensors.
 
-import config
+from . import config
 
 tilt_dir = 0 # 0 tilts right, 1 tilts left
 
