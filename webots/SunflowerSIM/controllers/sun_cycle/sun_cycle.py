@@ -2,18 +2,24 @@
 from controller import Supervisor
 import math
 import sys
-import os
 from pathlib import Path
 from datetime import datetime, timezone
+
 from solar_math import solar_direction_from_latlon, elevation_deg_from_direction
 
-# Make tracker package importable (tracker_main/tracker/...)
-TRACKER_MAIN_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "tracker_main"))
-if TRACKER_MAIN_DIR not in sys.path:
-    sys.path.insert(0, TRACKER_MAIN_DIR)
+# --- Make tracker package importable (controllers/tracker_main/tracker/...) ---
+HERE = Path(__file__).resolve()
+CONTROLLERS_DIR = HERE.parents[1]            # .../controllers
+TRACKER_MAIN_DIR = CONTROLLERS_DIR / "tracker_main"
 
-TRACKER_DIR = Path(TRACKER_MAIN_DIR) / "tracker"
+if str(TRACKER_MAIN_DIR) not in sys.path:
+    sys.path.insert(0, str(TRACKER_MAIN_DIR))
 
+# Now this works because tracker_main is on sys.path
+from tracker.location_store import LocationStore
+
+TRACKER_DIR = TRACKER_MAIN_DIR / "tracker"
+store = LocationStore(path=str(TRACKER_DIR / "location.json"))
 
 # --- Webots setup ---
 robot = Supervisor()
