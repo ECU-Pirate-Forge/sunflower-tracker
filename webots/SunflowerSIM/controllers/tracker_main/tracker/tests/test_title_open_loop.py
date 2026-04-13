@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
-import title_open_loop
+from tracker import title_open_loop
 from title_open_loop import update_open_loop_tilt
 
 # Configurations for testing

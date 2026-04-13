@@ -13,7 +13,7 @@ from controller import Robot
 from tracker import config
 from tracker.sensors import init_light_sensors, read_light_sensors
 from tracker.pan_closed_loop import update_pan_closed_loop
-from tracker.title_open_loop import update_open_loop_tilt
+from tracker.tilt_open_loop import update_open_loop_tilt
 from tracker.tilt_closed_loop import update_tilt_closed_loop
 
 
