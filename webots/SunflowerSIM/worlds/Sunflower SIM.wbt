@@ -7,18 +7,24 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 WorldInfo {
 }
 Viewpoint {
-  orientation 0.027251651055743335 -0.18523047015499314 0.9823171689637193 0.2972295641904832
-  position -1.4248355125222492 -0.363995558213869 0.0409735022995089
+  orientation -0.20220420234846898 0.03705618773155811 0.978642069146541 2.786671674313313
+  position 1.3837555328130833 -0.4808403162839602 0.6802191750673664
 }
 DEF SUN DirectionalLight {
-  direction 5 -13 -18
+  direction -0.7939903986943607 -0.6079302976338407 -0.1823790892901522
+  intensity 3
   castShadows TRUE
+}
+Robot {
+  name "world_supervisor"
+  controller "<none>"
+  supervisor TRUE
 }
 Robot {
   children [
     DEF PAN_JOINT HingeJoint {
       jointParameters HingeJointParameters {
-        position 0.13321133919749836
+        position -0.20072035413197928
         axis 0 0 1
         anchor 0 0 0.05
         minStop -3.13
@@ -36,12 +42,12 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation 0 0 0.11000000000000003
-        rotation 0 0 1 0.13321133919749742
+        translation 0 0 0.10999999999999976
+        rotation 0 0 -0.9999999999999999 0.20072035413197897
         children [
           DEF TILT_JOINT HingeJoint {
             jointParameters HingeJointParameters {
-              position 0.3539507454408668
+              position 0.33001792014976833
               axis 0 1 0
               anchor 0 0 0.01
               minStop -1.2
@@ -58,16 +64,30 @@ Robot {
               }
             ]
             endPoint Solid {
-              translation 0.006932126884517043 0 0.028760213667678544
-              rotation 0 1 0 0.3539507454408666
+              translation 0.00648119963126642 0 0.028920730729537693
+              rotation 0 1 0 0.3300179201497688
               children [
                 LightSensor {
-                  translation 0.015 0 0.031
+                  translation 0.018 0 0.03
+                  rotation 0.037113480951260276 0.37113480951260275 0.9278370237815069 -0.7426996938995747
                   name "light_right"
+                  lookupTable [
+                    0 0 0
+                    20 1 0
+                    100 5 0
+                    1000 10 0
+                  ]
                 }
                 LightSensor {
-                  translation -0.015 0 0.031
+                  translation -0.018 0 0.03
+                  rotation 0.19611613513818404 0 0.9805806756909201 2.5000003061004255
                   name "light_left"
+                  lookupTable [
+                    0 0 0
+                    20 1 0
+                    100 5 0
+                    1000 10 0
+                  ]
                 }
                 Shape {
                   appearance Appearance {
@@ -98,8 +118,7 @@ Robot {
       }
     }
     Solid {
-      translation -8.029050170212439e-15 0.0003703647448524714 0.04970973598026496
-      rotation -0.9999999999999999 -2.958735067645641e-11 -1.1640727509170787e-10 7.500540599336263e-06
+      translation 0 0 0.04971755197764916
       children [
         Shape {
           appearance Appearance {
@@ -118,12 +137,12 @@ Robot {
       }
       physics Physics {
       }
-      linearVelocity 0 0 -2.8950050858611264e-07
-      angularVelocity 1.1901909845301768e-21 -3.4546010281948924e-32 -4.8948136377663653e-32
+      linearVelocity 0 0 -6.070850662353826e-08
     }
   ]
-  name "pan_tilt"
-  controller "pan_test"
+  name "sunflower_tracker"
+  controller "tracker_main"
+  supervisor TRUE
 }
 TexturedBackground {
 }
@@ -132,40 +151,4 @@ TexturedBackgroundLight {
 }
 RectangleArena {
   floorSize 10 10
-}
-Robot {
-  children [
-    SliderJoint {
-      jointParameters JointParameters {
-        position 0.07
-        maxStop 0.02
-        staticFriction 0.5
-      }
-      device [
-        LinearMotor {
-          name "selector_motor"
-        }
-        PositionSensor {
-          name "switch_sensor"
-        }
-      ]
-      endPoint Solid {
-        translation 1.23082e-14 -0.0503704 0.07
-        children [
-          Shape {
-            geometry Box {
-              size 0.05 0.03 0.005
-            }
-          }
-        ]
-        boundingObject Shape {
-          geometry Box {
-            size 0.05 0.03 0.005
-          }
-        }
-      }
-    }
-  ]
-  name "switch_device"
-  controller "switch_test"
 }
