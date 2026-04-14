@@ -1,12 +1,3 @@
-# Minimal controller to verify light sensors on the pan/tilt mount.
-# Prints L/R + diff and a direction label (LEFT/RIGHT/CENTER).
-#
-# Notes:
-# - A sensor can sit near a "floor" value when facing away from the sun or shaded.
-# - DEADBAND avoids jitter when readings are almost equal.
-# - Near the sensor "ceiling" (both sensors high), tiny diffs can still be meaningful,
-#   so we reduce the deadband to satisfy the edge-case unit test.
-
 import math
 from typing import List, Tuple
 from controller import Robot
@@ -15,7 +6,6 @@ from tracker.sensors import init_light_sensors, read_light_sensors
 from tracker.pan_closed_loop import update_pan_closed_loop
 from tracker.tilt_open_loop import update_open_loop_tilt
 from tracker.tilt_closed_loop import update_tilt_closed_loop
-
 
 USE_PATTERN = False  # If True, follows fixed pattern; if False, uses sine wave motion.
 
@@ -58,12 +48,6 @@ def step_pattern(
 
 
 def classify_direction(l: float, r: float, deadband: float = DEADBAND) -> str:
-    """
-    Return LEFT/RIGHT/CENTER based on (l - r).
-
-    Uses a normal deadband most of the time, but when both sensors are near their
-    top readings, reduces the deadband so small differences are still classified.
-    """
     effective_deadband = deadband
     if l >= CEILING_THRESHOLD and r >= CEILING_THRESHOLD:
         effective_deadband = deadband * CEILING_DEADBAND_SCALE
@@ -79,12 +63,19 @@ def main():
     robot = Robot()
     timestep = int(robot.getBasicTimeStep())
 
+    # --- START SWITCH HARDWARE ---
+    selector_motor = robot.getDevice('selector_motor')
+    selector_sensor = robot.getDevice('switch_sensor')
+    selector_sensor.enable(timestep)
+    keyboard = robot.getKeyboard()
+    keyboard.enable(timestep)
+    
+    MODE_POSITIONS = [0.7, 0.6, 0.5] 
+    # --- END SWITCH HARDWARE ---
+
     # Devices
     pan_motor = robot.getDevice(config.PAN_MOTOR_NAME)
     pan_motor.setVelocity(config.PAN_MOTOR_VELOCITY)
-    tilt_motor = robot.getDevice(config.TILT_MOTOR_NAME)
-    tilt_motor.setVelocity(config.TILT_MOTOR_VELOCITY)
-
     tilt_motor = robot.getDevice(config.TILT_MOTOR_NAME)
     tilt_motor.setVelocity(config.TILT_MOTOR_VELOCITY)
 
@@ -105,38 +96,58 @@ def main():
     while robot.step(timestep) != -1:
         t += timestep / 1000.0
         step_count += 1
-        
-        if USE_PATTERN:
-            pattern_index, elapsed, target = step_pattern(
-                pattern_index,
-                elapsed,
-                timestep,
-                PATTERN,
-            )
-            pan_motor.setPosition(target)
 
+        # --- START SWITCH LOGIC ---
+        key = keyboard.getKey()
+        current_sw_x = selector_sensor.getValue()
+        
+        # Override logic
+        if key == ord('1'):
+            target_x = MODE_POSITIONS[0]
+            print('Current mode: Open')
+        elif key == ord('2'):
+            target_x = MODE_POSITIONS[1]
+            print('Current mode: Hybrid')            
+        elif key == ord('3'):
+            target_x = MODE_POSITIONS[2]
+            print('Current mode: Closed')
         else:
-            pan_motor.setPosition(PAN_AMPLITUDE * math.sin(PAN_FREQ * t))
-            tilt_motor.setPosition(TILT_AMPLITUDE * math.sin(TILT_FREQ * t))
+            target_x = min(MODE_POSITIONS, key=lambda x: abs(x - current_sw_x))
+            
+        # This prevents the "falling" by actively holding the motor at the target
+        selector_motor.setPosition(target_x)
+        # --- END SWITCH LOGIC ---
+        
+        # Only execute movement if in Mode 1 (0.7)
+        if target_x == 0.7:
+            if USE_PATTERN:
+                pattern_index, elapsed, target = step_pattern(
+                    pattern_index,
+                    elapsed,
+                    timestep,
+                    PATTERN,
+                )
+                pan_motor.setPosition(target)
+
+            else:
+                pan_motor.setPosition(PAN_AMPLITUDE * math.sin(PAN_FREQ * t))
+                tilt_motor.setPosition(TILT_AMPLITUDE * math.sin(TILT_FREQ * t))
 
         ll = float(light_left.getValue())
         lr = float(light_right.getValue())
         
         diff = ll - lr
         side = classify_direction(ll, lr)
-        # Closed-loop pan update
-        update_pan_closed_loop(pan_motor, l, r)
-        update_tilt_closed_loop(tilt_motor, l, r)
+        
+        # Only execute closed-loop if in Mode 2 (0.6)
+        if target_x == 0.6:
+            update_pan_closed_loop(pan_motor, ll, lr)
+            update_tilt_closed_loop(tilt_motor, ll, lr)
 
-        # Open-loop tilt update
-        """
-        To prevent any clashing with closed loop tilt, I am commenting out open-loop tilt until the functionality
-        for switching between modes is added.
-        update_open_loop_tilt(tilt_motor)
-        """
+        # Mode 3 (0.5) effectively does nothing, keeping the robot still.
 
         if step_count % PRINT_EVERY_N_STEPS == 0:
-            print(f"L:{l:.3f} R:{r:.3f} diff:{diff:.3f} -> {side}")
+            print(f"L:{ll:.3f} R:{lr:.3f} diff:{diff:.3f} -> {side} | Mode X: {target_x}")
 
 
 if __name__ == "__main__":
