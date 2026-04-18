@@ -17,7 +17,7 @@ DEF SUN DirectionalLight {
 }
 Robot {
   name "world_supervisor"
-  controller "<none>"
+  controller "sun_cycle"
   supervisor TRUE
 }
 Robot {
@@ -168,7 +168,6 @@ Robot {
       }
       physics Physics {
       }
-      linearVelocity 0 0 -5.6843418860808e-17
     }
   ]
   name "sunflower_tracker"
