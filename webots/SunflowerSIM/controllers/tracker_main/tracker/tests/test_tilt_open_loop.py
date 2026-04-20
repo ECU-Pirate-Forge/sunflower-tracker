@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
-from tracker import title_open_loop
-from title_open_loop import update_open_loop_tilt
+from tracker import tilt_open_loop
+from tracker.tilt_open_loop import update_open_loop_tilt
 
 # Configurations for testing
 TEST_MIN = -1.2
@@ -12,7 +12,7 @@ class TestUpdateOpenLoopTilt(unittest.TestCase):
 
 # ----------------------------------------------------------------SETUP FUNCTIONS----------------------------------------------------------------
     def setUpTilt(self): # Set the tilt direction to normal at the beginning each test
-        title_open_loop.tilt_dir = 0
+        tilt_open_loop.tilt_dir = 0
 
     def setUpMotor(self, position):
         mock_motor = MagicMock()
@@ -22,7 +22,7 @@ class TestUpdateOpenLoopTilt(unittest.TestCase):
 # ----------------------------------------------------------------UNIT TEST FUNCTIONS----------------------------------------------------------------
     def test_handlingNAN(self):
         motor = self.setUpMotor(float("nan"))
-        title_open_loop.tilt_dir = 0
+        tilt_open_loop.tilt_dir = 0
         update_open_loop_tilt(motor)
 
         # Expected = 0 + STEP, 
@@ -32,39 +32,39 @@ class TestUpdateOpenLoopTilt(unittest.TestCase):
     def test_centerToRight(self):
         center = float(0)
         motor = self.setUpMotor(center)
-        title_open_loop.tilt_dir = 0
+        tilt_open_loop.tilt_dir = 0
         update_open_loop_tilt(motor)
         motor.setPosition.assert_called_once_with(center + TEST_STEP)
     
-    def test_centertitle_open_loopeft(self):
+    def test_centertilt_open_loopeft(self):
         center = float(0)
         motor = self.setUpMotor(center)
-        title_open_loop.tilt_dir = 1
+        tilt_open_loop.tilt_dir = 1
         update_open_loop_tilt(motor)
         motor.setPosition.assert_called_once_with(center - TEST_STEP)
     
-    def test_righttitle_open_loopeft(self):
+    def test_righttilt_open_loopeft(self):
         motor = self.setUpMotor(TEST_MAX)
-        title_open_loop.tilt_dir = 0 # Start right
+        tilt_open_loop.tilt_dir = 0 # Start right
         update_open_loop_tilt(motor)
-        self.assertEqual(title_open_loop.tilt_dir, 1) # End left
+        self.assertEqual(tilt_open_loop.tilt_dir, 1) # End left
 
     def test_leftToRight(self):
         motor = self.setUpMotor(TEST_MIN)
-        title_open_loop.tilt_dir = 1 # Start left
+        tilt_open_loop.tilt_dir = 1 # Start left
         update_open_loop_tilt(motor)
-        self.assertEqual(title_open_loop.tilt_dir, 0) # End right
+        self.assertEqual(tilt_open_loop.tilt_dir, 0) # End right
     
     def test_maxClamp(self):
         motor = self.setUpMotor(TEST_MAX)
-        title_open_loop.tilt_dir = 0
+        tilt_open_loop.tilt_dir = 0
         update_open_loop_tilt(motor)
         called_pos = motor.setPosition.call_args[0][0]
         self.assertLessEqual(called_pos, TEST_MAX)
 
     def test_minClamp(self):
         motor = self.setUpMotor(TEST_MIN)
-        title_open_loop.tilt_dir = 1
+        tilt_open_loop.tilt_dir = 1
         update_open_loop_tilt(motor)
         called_pos = motor.setPosition.call_args[0][0]
         self.assertGreaterEqual(called_pos, TEST_MIN)
@@ -82,7 +82,7 @@ class TestUpdateOpenLoopTilt(unittest.TestCase):
         motor = MagicMock()
         motor.getTargetPosition.side_effect = get
         motor.setPosition.side_effect = set
-        title_open_loop.tilt_dir = 0
+        tilt_open_loop.tilt_dir = 0
         steps = int((TEST_MAX - TEST_MIN) / TEST_STEP) * 4   # 2 cycles
         for _ in range(steps):
             update_open_loop_tilt(motor)
@@ -101,12 +101,12 @@ class TestUpdateOpenLoopTilt(unittest.TestCase):
         motor = MagicMock()
         motor.getTargetPosition.side_effect = get
         motor.setPosition.side_effect = set
-        title_open_loop.tilt_dir = 0
+        tilt_open_loop.tilt_dir = 0
         steps = int((TEST_MAX - TEST_MIN) / TEST_STEP) * 2 + 2
         for _ in range(steps):
             update_open_loop_tilt(motor)
  
-        self.assertEqual(title_open_loop.tilt_dir, 0)
+        self.assertEqual(tilt_open_loop.tilt_dir, 0)
 
 
 if __name__ == "__main__":

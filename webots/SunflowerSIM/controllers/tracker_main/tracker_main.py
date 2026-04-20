@@ -1,16 +1,4 @@
-# Minimal controller to verify light sensors on the pan/tilt mount.
-# Prints L/R + diff and a direction label (LEFT/RIGHT/CENTER).
-#
-# Notes:
-# - A sensor can sit near a "floor" value when facing away from the sun or shaded.
-# - DEADBAND avoids jitter when readings are almost equal.
-# - Near the sensor "ceiling" (both sensors high), tiny diffs can still be meaningful,
-#   so we reduce the deadband to satisfy the edge-case unit test.
-
 import math
-import threading
-import tkinter as tk
-from queue import Queue, Empty
 from typing import List, Tuple
 from controller import Robot
 from tracker import config
@@ -19,6 +7,11 @@ from tracker.pan_closed_loop import update_pan_closed_loop
 from tracker.tilt_open_loop import update_open_loop_tilt
 from tracker.tilt_closed_loop import update_tilt_closed_loop
 
+"""
+---------------------------------GLOBAL VARIABLES---------------------------------
+"""
+
+USE_PATTERN = False
 
 # --- Mode constants ---
 MODE_OPEN_LOOP   = 1
@@ -52,90 +45,9 @@ PATTERN = [
     (0.0,  3000),
 ]
 
-# --- Shared state (UI thread <-> simulation loop) ---
-current_mode = MODE_OPEN_LOOP
-mode_lock    = threading.Lock()
-log_queue: Queue = Queue()
-
-
-class ModeControlUI:
-    """Floating window showing active mode and live sensor log."""
-
-    def __init__(self, root: tk.Tk) -> None:
-        self.root = root
-        self.root.title("Sunflower Tracker – Mode Control")
-        self.root.geometry("420x300")
-        self.root.resizable(False, False)
-
-        # Current mode display
-        tk.Label(root, text="Current Mode:", font=("Arial", 11)).pack(pady=(14, 0))
-        self.mode_value = tk.Label(
-            root,
-            text=MODE_LABELS[MODE_OPEN_LOOP],
-            font=("Arial", 20, "bold"),
-            fg="#4CAF50",
-        )
-        self.mode_value.pack(pady=(2, 4))
-
-        tk.Label(
-            root,
-            text="[1] Open-Loop     [2] Hybrid     [3] Closed-Loop",
-            font=("Arial", 9),
-            fg="gray",
-        ).pack()
-
-        # Live log output
-        log_frame = tk.Frame(root)
-        log_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-
-        scrollbar = tk.Scrollbar(log_frame)
-        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-
-        self.log_box = tk.Text(
-            log_frame,
-            height=8,
-            state=tk.DISABLED,
-            yscrollcommand=scrollbar.set,
-            font=("Courier", 9),
-            bg="#1e1e1e",
-            fg="#d4d4d4",
-        )
-        self.log_box.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        scrollbar.config(command=self.log_box.yview)
-
-        # Keyboard bindings
-        self.root.bind("1", lambda _: self._set_mode(MODE_OPEN_LOOP))
-        self.root.bind("2", lambda _: self._set_mode(MODE_HYBRID))
-        self.root.bind("3", lambda _: self._set_mode(MODE_CLOSED_LOOP))
-
-        self._poll_log()
-
-    def _set_mode(self, mode: int) -> None:
-        global current_mode
-        with mode_lock:
-            current_mode = mode
-        self.mode_value.config(text=MODE_LABELS[mode])
-
-    def _poll_log(self) -> None:
-        """Drain the log queue and append to the text widget (100 ms interval)."""
-        try:
-            while True:
-                msg = log_queue.get_nowait()
-                self.log_box.config(state=tk.NORMAL)
-                self.log_box.insert(tk.END, msg + "\n")
-                self.log_box.see(tk.END)
-                self.log_box.config(state=tk.DISABLED)
-        except Empty:
-            pass
-        self.root.after(100, self._poll_log)
-
-
-def run_ui() -> None:
-    """Entry point for the UI thread."""
-    root = tk.Tk()
-    ModeControlUI(root)
-    root.mainloop()
-
+"""
+---------------------------------HELPER FUNCTIONS---------------------------------
+"""
 
 def step_pattern(
     index: int,
@@ -151,9 +63,37 @@ def step_pattern(
         target, _ = pattern[index]
     return index, elapsed, target
 
+"""
+The code in this function was used multiple times due to the implementation of both open and hybrid logic. To prevent
+reusing the same blocks of code in multiple places, this code was placed into a function so only that function call
+needs to be used in multiple places, and not the entire code block.
+
+The code's purpose is to determine if the open loop's logic should run on a specifically defined pattern (located in
+the step_pattern function), or use sine wave motion to control the motors in open loop logic.
+"""
+def open_loop_logic(
+        pattern_index: int,
+        elapsed: int,
+        timestep: int,
+        pan_motor,
+        tilt_motor,
+        t: float
+):
+    if USE_PATTERN:
+        pattern_index, elapsed, target = step_pattern(
+            pattern_index,
+            elapsed,
+            timestep,
+            PATTERN,
+        )
+        pan_motor.setPosition(target)
+        update_open_loop_tilt(tilt_motor)
+    else:
+        pan_motor.setPosition(PAN_AMPLITUDE * math.sin(PAN_FREQ * t))
+        tilt_motor.setPosition(TILT_AMPLITUDE * math.sin(TILT_FREQ * t))
+
 
 def classify_direction(l: float, r: float, deadband: float = DEADBAND) -> str:
-    """Return LEFT / RIGHT / CENTER based on sensor difference."""
     effective_deadband = deadband
     if l >= CEILING_THRESHOLD and r >= CEILING_THRESHOLD:
         effective_deadband = deadband * CEILING_DEADBAND_SCALE
@@ -164,21 +104,31 @@ def classify_direction(l: float, r: float, deadband: float = DEADBAND) -> str:
         return "RIGHT"
     return "CENTER"
 
+"""
+---------------------------------CREATION OF MAIN FUNCTION---------------------------------
+"""
 
-def main() -> None:
-    # Launch UI in a daemon thread so it exits with the simulation
-    ui_thread = threading.Thread(target=run_ui, daemon=True)
-    ui_thread.start()
-
-    robot   = Robot()
+def main():
+    robot = Robot()
     timestep = int(robot.getBasicTimeStep())
 
-    pan_motor  = robot.getDevice(config.PAN_MOTOR_NAME)
+    # --- START SWITCH HARDWARE ---
+    selector_motor = robot.getDevice('selector_motor')
+    selector_sensor = robot.getDevice('switch_sensor')
+    selector_sensor.enable(timestep)
+    keyboard = robot.getKeyboard()
+    keyboard.enable(timestep)
+
+    MODE_POSITIONS = [0.7, 0.6, 0.5]
+    # --- END SWITCH HARDWARE ---
+
+    # Devices that are used within Webots
+    pan_motor = robot.getDevice(config.PAN_MOTOR_NAME)
     pan_motor.setVelocity(config.PAN_MOTOR_VELOCITY)
     tilt_motor = robot.getDevice(config.TILT_MOTOR_NAME)
     tilt_motor.setVelocity(config.TILT_MOTOR_VELOCITY)
 
-    light_left  = robot.getDevice("light_left")
+    light_left = robot.getDevice("light_left")
     light_right = robot.getDevice("light_right")
     light_left.enable(timestep)
     light_right.enable(timestep)
@@ -193,41 +143,62 @@ def main() -> None:
         t          += timestep / 1000.0
         step_count += 1
 
-        # Read sensors (fixes ll/lr -> l/r variable mismatch from previous version)
-        l    = float(light_left.getValue())
-        r    = float(light_right.getValue())
-        diff = l - r
-        side = classify_direction(l, r)
+        # --- START SWITCH LOGIC ---
+        key = keyboard.getKey()
+        current_sw_x = selector_sensor.getValue()
 
-        # Snapshot mode once per step to keep behavior consistent within a step
-        with mode_lock:
-            mode = current_mode
+        if key == ord('1'):
+            target_x = MODE_POSITIONS[0]
+            print('Current mode: Open')
+        elif key == ord('2'):
+            target_x = MODE_POSITIONS[1]
+            print('Current mode: Hybrid')
+        elif key == ord('3'):
+            target_x = MODE_POSITIONS[2]
+            print('Current mode: Closed')
+        else:
+            target_x = min(MODE_POSITIONS, key=lambda x: abs(x - current_sw_x))
 
-        # --- Mode dispatch ---
-        if mode == MODE_OPEN_LOOP:
-            # Pure sine-wave drive on both axes; no sensor feedback
-            pan_motor.setPosition(PAN_AMPLITUDE * math.sin(PAN_FREQ * t))
-            update_open_loop_tilt(tilt_motor)
+        # This prevents the "falling" by actively holding the motor at the target
+        selector_motor.setPosition(target_x)
+        # --- END SWITCH LOGIC ---
 
-        elif mode == MODE_HYBRID:
-            # Open-loop pan, closed-loop tilt
-            pan_motor.setPosition(PAN_AMPLITUDE * math.sin(PAN_FREQ * t))
-            update_tilt_closed_loop(tilt_motor, l, r)
+        ll = float(light_left.getValue())
+        lr = float(light_right.getValue())
 
-        elif mode == MODE_CLOSED_LOOP:
-            # Full sensor-feedback control on both axes
-            update_pan_closed_loop(pan_motor, l, r)
-            update_tilt_closed_loop(tilt_motor, l, r)
+        diff = ll - lr
+        side = classify_direction(ll, lr)
 
-        # Log to console and UI every N steps
+        """
+        ------------------------------------------SWITCH LOGIC------------------------------------------
+        Movement type that is executed is determined by mode value, contained in the target_x variable
+        ------------------------------------------------------------------------------------------------
+        """
+
+        if (target_x == MODE_POSITIONS[0]):
+            open_loop_logic(pattern_index, elapsed, timestep, pan_motor, tilt_motor, t)
+        elif (target_x == MODE_POSITIONS[1]):
+            if (ll <= float(0.050) and lr <= float(0.050)):
+                open_loop_logic(pattern_index, elapsed, timestep, pan_motor, tilt_motor, t)
+            else:
+                update_pan_closed_loop(pan_motor, ll, lr)
+                update_tilt_closed_loop(tilt_motor, ll, lr)
+        elif (target_x == MODE_POSITIONS[2]):
+            update_pan_closed_loop(pan_motor, ll, lr)
+            update_tilt_closed_loop(tilt_motor, ll, lr)
+        else:
+            target_x = MODE_POSITIONS[0]
+
+        """
+        ------------------------------------------SANITY CHECKING-----------------------------------
+        """
+
         if step_count % PRINT_EVERY_N_STEPS == 0:
-            msg = (
-                f"[{MODE_LABELS[mode]:<12}]  "
-                f"L:{l:.3f}  R:{r:.3f}  diff:{diff:+.3f}  -> {side}"
-            )
-            print(msg)
-            log_queue.put(msg)
+            print(f"L:{ll:.3f} R:{lr:.3f} diff:{diff:.3f} -> {side} | Mode X: {target_x}")
 
+"""
+---------------------------------RUNNING THE MAIN FUNCTION---------------------------------
+"""
 
 if __name__ == "__main__":
     main()

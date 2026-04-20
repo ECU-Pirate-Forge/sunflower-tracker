@@ -7,8 +7,8 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.20220420234846898 0.03705618773155811 0.978642069146541 2.786671674313313
-  position 1.3837555328130833 -0.4808403162839602 0.6802191750673664
+  orientation 0.053097962361330055 0.008792040224840656 -0.9985506028348086 2.8138745424559666
+  position 2.4491698682920937 1.188102257639862 0.23244524948072265
 }
 DEF SUN DirectionalLight {
   direction -0.7939903986943607 -0.6079302976338407 -0.1823790892901522
@@ -17,14 +17,46 @@ DEF SUN DirectionalLight {
 }
 Robot {
   name "world_supervisor"
-  controller "<none>"
+  controller "sun_cycle"
   supervisor TRUE
 }
 Robot {
   children [
+    SliderJoint {
+      jointParameters JointParameters {
+        position 0.07
+        axis 0 1 0
+        minStop 0.4
+        maxStop 0.8
+        staticFriction 0.5
+      }
+      device [
+        PositionSensor {
+          name "switch_sensor"
+        }
+        LinearMotor {
+          name "selector_motor"
+          controlPID 1 0 0
+          maxVelocity 1
+          maxForce 100
+        }
+      ]
+      endPoint Solid {
+        translation 0 0.06 0.03
+        children [
+          Shape {
+            geometry Box {
+              size 0.05 0.02 0.02
+            }
+          }
+        ]
+        boundingObject Box {
+          size 0.05 0.02 0.02
+        }
+      }
+    }
     DEF PAN_JOINT HingeJoint {
       jointParameters HingeJointParameters {
-        position -0.20072035413197928
         axis 0 0 1
         anchor 0 0 0.05
         minStop -3.13
@@ -42,12 +74,11 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation 0 0 0.10999999999999976
-        rotation 0 0 -0.9999999999999999 0.20072035413197897
+        translation 0 0 0.10999999999999965
         children [
           DEF TILT_JOINT HingeJoint {
             jointParameters HingeJointParameters {
-              position 0.33001792014976833
+              position 0.34025792014976836
               axis 0 1 0
               anchor 0 0 0.01
               minStop -1.2
@@ -64,8 +95,8 @@ Robot {
               }
             ]
             endPoint Solid {
-              translation 0.00648119963126642 0 0.028920730729537693
-              rotation 0 1 0 0.3300179201497688
+              translation 0.006674604729407979 0 0.028853372422624132
+              rotation 0 0.9999999999999999 0 0.34025792014976813
               children [
                 LightSensor {
                   translation 0.018 0 0.03
@@ -118,7 +149,7 @@ Robot {
       }
     }
     Solid {
-      translation 0 0 0.04971755197764916
+      translation 0 0 0.04963909495066551
       children [
         Shape {
           appearance Appearance {
@@ -137,7 +168,6 @@ Robot {
       }
       physics Physics {
       }
-      linearVelocity 0 0 -6.070850662353826e-08
     }
   ]
   name "sunflower_tracker"
@@ -150,5 +180,6 @@ TexturedBackgroundLight {
   luminosity 0
 }
 RectangleArena {
+  translation -0.167136 0.00105371 8.46314e-17
   floorSize 10 10
 }
