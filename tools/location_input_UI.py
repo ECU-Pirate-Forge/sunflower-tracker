@@ -162,4 +162,3 @@ class LocationApp:
 if __name__ == "__main__":
     app = LocationApp()
     app.run()
-    app.run()
