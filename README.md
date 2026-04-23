@@ -19,6 +19,12 @@ The following features are present within the Sunflower Tracker:
     - ***Location Specification*** is another feature similar to this, as the user is able to manually set their general timezone/location, as well as their latitude and longitude of their location, allowing the simulation to provide adequate movement of the sun according to their general location.
 - ***Logging***, where the system will come with the ability to store records of information such as the device's angle, light intensity, and any potential errors that can occur during the tracking process. These records would also have timestamps that allow the users and developers to know exactly when something occurred, whether it was a good or bad occurrence.
 
+# Future Plans
+- Addition of a mobile application for the project would allow for easier access.
+- Successfully automate the github project to ensure that there are proper tests and updates while ensuring that the Webots world runs as expected with each automated deployment.
+- Update the user interface to allow for more personalization of the sunflower tracker to their current location.
+- Update graphics to improve the visual design of the application.
+
 ---
 
 # Getting Started
@@ -49,6 +55,23 @@ Once you have cloned the repository, navigate to the folder where you have store
 ```bash
 To Be Added
 ```
+
+---
+
+# Documenation / Directory Definition
+Below are the imporant directories for this project:
+- ***.github*** contains important files for github to recognize, including the files for automated deployment and github workflows
+- ***.pytest_cache*** contains files for running unit tests
+- ***webots/SunflowerSIM*** is the main directory where we perform our work.
+    - The ***controllers*** folder is where the main code is updated.
+        - The ***light_read*** folder contains the code for controlling the ability to read the light source within the simulation.
+        - The **sun_cycle*** folder contains the code for creating a proper cycle for the sun to revolve around, making it as close as possible to the real world path, but sped up for the simulation. (Time is calculated in seconds. In sun_cycle.py, set SUN_CYCLE_SECONDS to change the speed. 86400.0 will equal a full day.)
+        - ***tracker_main*** contains all the code to provide movement and action to the sunflower tracker robot. tracker_main.py contains the main loop that is run while Webots is active, while the ***tracker*** folder contains all the files with the functions that are referenced, as well as current relevant test files.
+            - Files starting with "pan_" deal with controlling the panning motion.
+            - Files starting with "tilt_" deal with controlling the tilting motion.
+            - The sensors are used to detect the sun's current direction.
+            - location.json and location_store.py are used to store information regarding the user's latitude and longitude.
+    - The ***worlds*** folder contains the Webots world files that allow you to access the Webots simulation on your device. Webots must be installed to properly view these.
 
 ---
 
