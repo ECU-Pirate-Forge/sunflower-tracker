@@ -52,10 +52,6 @@ The next step will be to open the world file that is associated with this projec
 Once you have cloned the repository, navigate to the folder where you have stored it. Once in that folder go through the following filepath to reach the webots simulation: ```sunflower-tracker/webots/SunflowerSIM/worlds```. Open the file titled "Sunflower SIM.wbt". This will automatically launch Webots and open the world containing the current progress of the Sunflower Tracker simulation, similar to what is pictured below.
 <img width="1919" height="999" alt="image" src="https://github.com/user-attachments/assets/83eafb3f-f058-4f25-a0d9-0fa728e85ab7" />
 
-```bash
-To Be Added
-```
-
 ---
 
 # Documenation / Directory Definition
