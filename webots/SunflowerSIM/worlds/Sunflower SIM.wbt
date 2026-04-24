@@ -7,11 +7,11 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.20220420234846898 0.03705618773155811 0.978642069146541 2.786671674313313
-  position 1.3837555328130833 -0.4808403162839602 0.6802191750673664
+  orientation -0.5773502691896258 -0.5773502691896258 -0.5773502691896258 2.0944
+  position -0.9430296992798126 -1.5122504128484373 -7700421868055235
 }
 DEF SUN DirectionalLight {
-  direction -0.7939903986943607 -0.6079302976338407 -0.1823790892901522
+  direction 0.9995452431006843 -0.03015471762086138 0.009046415286258413
   intensity 3
   castShadows TRUE
 }
@@ -24,7 +24,7 @@ Robot {
   children [
     DEF PAN_JOINT HingeJoint {
       jointParameters HingeJointParameters {
-        position -0.20072035413197928
+        position 0.9478573603897821
         axis 0 0 1
         anchor 0 0 0.05
         minStop -3.13
@@ -43,11 +43,11 @@ Robot {
       ]
       endPoint Solid {
         translation 0 0 0.10999999999999976
-        rotation 0 0 -0.9999999999999999 0.20072035413197897
+        rotation 0 0 1 0.9478573603897819
         children [
           DEF TILT_JOINT HingeJoint {
             jointParameters HingeJointParameters {
-              position 0.33001792014976833
+              position 0.5985319871627931
               axis 0 1 0
               anchor 0 0 0.01
               minStop -1.2
@@ -64,8 +64,8 @@ Robot {
               }
             ]
             endPoint Solid {
-              translation 0.00648119963126642 0 0.028920730729537693
-              rotation 0 1 0 0.3300179201497688
+              translation 0.011268605242659041 0 0.026523272553738167
+              rotation 0 1 0 0.5985319871627932
               children [
                 LightSensor {
                   translation 0.018 0 0.03
@@ -118,7 +118,7 @@ Robot {
       }
     }
     Solid {
-      translation 0 0 0.04972539220733977
+      translation 0 0 0.04969400020733981
       children [
         Shape {
           appearance Appearance {
@@ -141,7 +141,7 @@ Robot {
     }
   ]
   name "sunflower_tracker"
-  controller "tracker_main"
+  controller "pan_test"
   supervisor TRUE
 }
 TexturedBackground {
