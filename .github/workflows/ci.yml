@@ -25,10 +25,9 @@ jobs:
 
       - name: Ruff (basic lint)
         run: |
-          ruff check ^
-            webots/SunflowerSIM/controllers/tracker_main/tracker ^
-            webots/SunflowerSIM/controllers/sun_cycle ^
-            --select E9,F63,F7,F82
+          ruff check \
+            webots/SunflowerSIM/controllers/tracker_main/tracker \
+            webots/SunflowerSIM/controllers/sun_cycle 
 
       - name: Pytest (unit tests)
         run: |
