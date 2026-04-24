@@ -7,11 +7,11 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.5773502691896258 -0.5773502691896258 -0.5773502691896258 2.0944
-  position -0.9430296992798126 -1.5122504128484373 -7700421868055235
+  orientation -0.2139234940449256 0.017958098681258184 0.9766853359129362 2.977980253877557
+  position 2.0759518604562306 -0.595882282655274 1.2857324400365848
 }
 DEF SUN DirectionalLight {
-  direction 0.9995452431006843 -0.03015471762086138 0.009046415286258413
+  direction 0.9352217514008573 -0.35406253078617766 0.10621875923585329
   intensity 3
   castShadows TRUE
 }
@@ -21,6 +21,7 @@ Robot {
   supervisor TRUE
 }
 Robot {
+  rotation 0 0 1 0.261799
   children [
     DEF PAN_JOINT HingeJoint {
       jointParameters HingeJointParameters {
@@ -118,7 +119,8 @@ Robot {
       }
     }
     Solid {
-      translation 0 0 0.04969400020733981
+      translation 0 0 0.049684590622860896
+      rotation 0 0 -1 7.160323950296189e-16
       children [
         Shape {
           appearance Appearance {
@@ -137,7 +139,8 @@ Robot {
       }
       physics Physics {
       }
-      linearVelocity 0 0 -5.6843418860808e-17
+      linearVelocity 0 0 -6.070850662353826e-08
+      angularVelocity 0 0 3.507856860458062e-17
     }
   ]
   name "sunflower_tracker"

@@ -483,3 +483,5 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+webots/SunflowerSIM/controllers/pan_test/sensor_data.csv
+webots/SunflowerSIM/controllers/pan_test/sensor_data.csv
