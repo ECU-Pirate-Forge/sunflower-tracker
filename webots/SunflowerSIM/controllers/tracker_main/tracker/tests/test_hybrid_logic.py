@@ -6,7 +6,7 @@ import sys
 # This prevents ModuleNotFoundError in pytest without affecting other modules.
 sys.modules.setdefault("controller", MagicMock())
 
-import tracker_main  # must come after the stub above
+import tracker_main  # noqa: E402  (must come after controller stub)
 
 
 """TEST ALIASES"""

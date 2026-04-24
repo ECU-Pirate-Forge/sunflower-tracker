@@ -1,6 +1,5 @@
 # sun_cycle.py
 from controller import Supervisor
-import math
 import sys
 from pathlib import Path
 from datetime import datetime, timezone
@@ -16,7 +15,7 @@ if str(TRACKER_MAIN_DIR) not in sys.path:
     sys.path.insert(0, str(TRACKER_MAIN_DIR))
 
 # Now this works because tracker_main is on sys.path
-from tracker.location_store import LocationStore
+from tracker.location_store import LocationStore  # noqa: E402
 
 TRACKER_DIR = TRACKER_MAIN_DIR / "tracker"
 store = LocationStore(path=str(TRACKER_DIR / "location.json"))
