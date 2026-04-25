@@ -1,12 +1,10 @@
 import math
-import sys
 from pathlib import Path
+from solar_math import solar_direction_from_latlon, elevation_deg_from_direction  # noqa: E402
 
 # Make solar_math importable when running pytest from anywhere
 SUN_CYCLE_DIR = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(SUN_CYCLE_DIR))
 
-from solar_math import solar_direction_from_latlon, elevation_deg_from_direction
 
 DAY = 172  # fixed day-of-year for stable tests (approx June)
 

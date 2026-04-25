@@ -25,10 +25,9 @@ jobs:
 
       - name: Ruff (basic lint)
         run: |
-          ruff check ^
-            webots/SunflowerSIM/controllers/tracker_main/tracker ^
-            webots/SunflowerSIM/controllers/sun_cycle ^
-            --select E9,F63,F7,F82
+          ruff check \
+            webots/SunflowerSIM/controllers/tracker_main/tracker \
+            webots/SunflowerSIM/controllers/sun_cycle 
 
       - name: Pytest (unit tests)
         run: |
@@ -44,12 +43,8 @@ jobs:
 
       - name: Build Webots package (zip)
         run: |
-          zip -r sunflower-tracker-webots-package.zip ^
-            webots/SunflowerSIM tools docs ^
-            -x "**/__pycache__/**" ^
-               "**/.pytest_cache/**" ^
-               "**/.DS_Store" ^
-               "**/*.log"
+          zip -r sunflower-tracker-webots-package.zip webots/SunflowerSIM \
+            -x "**/__pycache__/**" "**/.pytest_cache/**" "**/*.pyc" "**/.DS_Store"
 
       - name: Upload package artifact
         uses: actions/upload-artifact@v4

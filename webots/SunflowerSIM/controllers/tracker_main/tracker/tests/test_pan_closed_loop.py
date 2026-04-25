@@ -1,6 +1,4 @@
 # tracker/tests/test_pan_closed_loop.py
-
-import math
 from tracker import config
 from tracker.pan_closed_loop import update_pan_closed_loop
 
